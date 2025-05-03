@@ -73,3 +73,36 @@ The API is built with Typescript Node.js, Express, and MongoDB, and it is design
   }
 }
 ```
+
+### 3. Get Authenticated User Info
+
+**Endpoint:** GET /auth/me
+
+**Description:** Returns the authenticated user's details.
+
+**Headers:**
+
+```json
+  Authorization: Bearer <JWT_TOKEN>
+```
+
+**Response 200** Ok
+
+```json
+{
+  "_id": "60f5c2b6b3f6f91a8c123456",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "role": "user",
+  "createdAt": "2023-01-01T12:00:00.000Z",
+  "updatedAt": "2023-01-01T12:00:00.000Z"
+}
+```
+
+**Response 401** Unauthorized (missing or invalid token)
+
+```json
+{
+  "message": "Unauthorized: Token not provided"
+}
+```
