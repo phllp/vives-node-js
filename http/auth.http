@@ -1,0 +1,27 @@
+### Register a new user
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "name": "Eleanor Rigby",
+  "role": "donor",
+  "email": "eleanor@rigby.com",
+  "password": "eleanorPassword123"
+}
+
+###
+
+### Login user
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "eleanor@rigby.com",
+  "password": "eleanorPassword123"
+}
+
+###
+
+### Get current user (Replace TOKEN after login)
+GET http://localhost:3000/auth/me
+Authorization: Bearer $TOKEN
