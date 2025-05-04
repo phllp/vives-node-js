@@ -22,6 +22,8 @@ Content-Type: application/json
 
 ###
 
+@token=your_token_here
+
 ### Get current user (Replace TOKEN after login)
 GET http://localhost:3000/auth/me
-Authorization: Bearer $TOKEN
+Authorization: Bearer {{token}}

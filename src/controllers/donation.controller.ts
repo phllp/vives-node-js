@@ -27,7 +27,7 @@ export default class DonationController {
      */
     const donation = await Donation.create({
       ...value,
-      donor: (req as any).user._id,
+      donor: (req as any).user.id,
     });
     res.status(201).json(donation);
     return;

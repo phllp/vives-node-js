@@ -1,0 +1,48 @@
+# Replace the following variables with your actual values
+@token=your_token_here
+@donation_id=donation_id_here
+
+### Create Donation
+POST http://localhost:3000/donations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTc4MjE4MWIxMzk0N2UxZjE5ZGRhMyIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0NjM3MjE4NiwiZXhwIjoxNzQ2NDU4NTg2fQ.Uc63RjAA5kJ11oqMQntpM_3UVgcS-jPJY8BjlSMyv28
+
+{
+  "title": "Winter Jacket",
+  "description": "Gently used, size L",
+  "category": "Clothing"
+}
+
+###
+
+### Get All Donations
+GET http://localhost:3000/donations
+Authorization: Bearer {{token}}
+
+###
+
+### Get Donation by ID
+GET http://localhost:3000/donations/{{donation_id}}
+Authorization: Bearer {{token}}
+
+###
+
+### Update Donation
+PUT http://localhost:3000/donations/{{donation_id}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Winter Jacket (Updated)",
+  "description": "Still gently used, added hood",
+  "category": "Clothing",
+  "status": "available"
+}
+
+###
+
+### Delete Donation
+DELETE http://localhost:3000/donations/{{donation_id}}
+Authorization: Bearer {{token}}
+
+###
