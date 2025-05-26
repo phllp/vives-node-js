@@ -7,7 +7,7 @@ export interface IHelpRequest extends Document {
   title: string;
   description: string;
   category: Category;
-  recipient: Types.ObjectId;
+  requester: Types.ObjectId;
   status: RequestStatus;
   createdAt: Date;
 }
@@ -21,7 +21,7 @@ const helpRequestSchema = new Schema<IHelpRequest>(
       enum: ["food", "clothing", "health", "other"],
       required: true,
     },
-    recipient: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    requester: { type: Schema.Types.ObjectId, ref: "User", required: true },
     status: { type: String, enum: ["open", "fulfilled"], default: "open" },
   },
   {
