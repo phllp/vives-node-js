@@ -1,5 +1,5 @@
 # Replace the following variables with your actual values
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTc4MjE4MWIxMzk0N2UxZjE5ZGRhMyIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODI2NjI4MSwiZXhwIjoxNzQ4MzUyNjgxfQ.7ay8vPuAN2UAPHNKXG1zxtbQTFvFpjH6jhw-i2jx8p8
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTc4MjE4MWIxMzk0N2UxZjE5ZGRhMyIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODQyMTg1NywiZXhwIjoxNzQ4NTA4MjU3fQ.1dOUvuzVutTqgVJR_duaS4x3dJ9R5Kzi86VE4PLFFH0
 @donation_id=6834b911d7935e36b89387f4
 
 @help_request_id=6834b65343ebf46de667761a
@@ -47,3 +47,7 @@ DELETE http://localhost:3000/donations/{{donation_id}}
 Authorization: Bearer {{token}}
 
 ###
+
+
+### Get donations overview
+GET http://localhost:3000/donations/analytics/overview

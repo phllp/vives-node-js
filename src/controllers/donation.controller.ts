@@ -115,4 +115,41 @@ export default class DonationController {
     res.status(204).json({ message: "Donation deleted" });
     return;
   }
+
+  async getMyDonations(req: AuthRequest, res: Response) {
+    const userId = (req as any).user.id;
+    const donations = await Donation.find({ donor: userId }).populate(
+      "donor",
+      "name email",
+    );
+    res.json(donations);
+    return;
+  }
+
+  async getDonationOverview(req: AuthRequest, res: Response) {
+    try {
+      const donations = await Donation.find();
+      const helpRequests = await HelpRequest.find();
+      const openRequests = helpRequests.filter(
+        (request) => request.status === "open",
+      ).length;
+
+      const fulfilledRequests = helpRequests.filter(
+        (request) => request.status === "fulfilled",
+      ).length;
+
+      const overview = {
+        totalDonations: donations.length,
+        totalHelpRequests: helpRequests.length,
+        openHelpRequests: openRequests,
+        fulfilledHelpRequests: fulfilledRequests,
+      };
+      res.json(overview);
+      return;
+    } catch (error) {
+      console.error("Error fetching donation overview:", error);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+  }
 }
