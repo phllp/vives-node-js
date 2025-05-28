@@ -3,8 +3,16 @@ import mongoose from "mongoose";
 
 export const createDonationSchema = Joi.object({
   title: Joi.string().required(),
-  description: Joi.string().allow(""),
   category: Joi.string().required(),
+  message: Joi.string().max(500).optional(),
+  helpRequest: Joi.string()
+    .required()
+    .custom((value, helpers) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        return helpers.error("any.invalid");
+      }
+      return value;
+    }, "ObjectId validation"),
 });
 
 export const updateDonationSchema = Joi.object({

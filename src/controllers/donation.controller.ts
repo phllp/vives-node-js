@@ -6,6 +6,7 @@ import {
   updateDonationSchema,
 } from "../validations/donation";
 import { Donation } from "../models/donation.model";
+import { HelpRequest } from "../models/help-request.model";
 
 export default class DonationController {
   private donationService: DonationService;
@@ -16,21 +17,47 @@ export default class DonationController {
 
   async createDonation(req: AuthRequest, res: Response) {
     const { error, value } = createDonationSchema.validate(req.body);
+    console.log(value);
     if (error) {
       res.status(400).json({ error: error.details[0].message });
       return;
     }
+    try {
+      const { helpRequest } = value;
+      const request = await HelpRequest.findById(helpRequest);
 
-    /**
-     * The logged user is the donor, so we set the donor field
-     * to the logged user's ID which is stored via the middleware
-     */
-    const donation = await Donation.create({
-      ...value,
-      donor: (req as any).user.id,
-    });
-    res.status(201).json(donation);
-    return;
+      if (!request) {
+        res.status(404).json({ error: "Help request not found" });
+        return;
+      }
+
+      if (request.status === "fulfilled") {
+        res
+          .status(400)
+          .json({ error: "This help request has already been fulfilled" });
+        return;
+      }
+
+      /**
+       * The logged user is the donor, so we set the donor field
+       * to the logged user's ID which is stored via the middleware
+       */
+      const donation = await Donation.create({
+        ...value,
+        donor: (req as any).user.id,
+      });
+
+      // Update the help request status to fulfilled
+      request.status = "fulfilled";
+      await request.save();
+
+      res.status(201).json(donation);
+      return;
+    } catch (error) {
+      console.error("Error creating donation:", error);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
   }
 
   async getAllDonations(req: AuthRequest, res: Response) {
@@ -41,7 +68,7 @@ export default class DonationController {
 
   async getDonationById(req: AuthRequest, res: Response) {
     const donation = await Donation.findById(req.params.id).populate(
-      "donor recipient",
+      "donor",
       "name email",
     );
     if (!donation) {
@@ -70,11 +97,20 @@ export default class DonationController {
     return;
   }
 
+  // todo: add validation so that only the donor can delete the donation
   async deleteDonation(req: AuthRequest, res: Response) {
-    const donation = await Donation.findByIdAndDelete(req.params.id);
+    const donation = await Donation.findById(req.params.id);
+
+    // const donation = await Donation.findByIdAndDelete(req.params.id);
+
     if (!donation) {
       res.status(404).json({ error: "Donation not found" });
       return;
+    }
+    const request = await HelpRequest.findById(donation?.helpRequest);
+    if (request) {
+      request.status = "open"; // Reset the help request status to open
+      await request.save();
     }
     res.status(204).json({ message: "Donation deleted" });
     return;

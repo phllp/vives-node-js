@@ -1,16 +1,19 @@
 # Replace the following variables with your actual values
-@token=your_token_here
-@donation_id=donation_id_here
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTc4MjE4MWIxMzk0N2UxZjE5ZGRhMyIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODI2NjI4MSwiZXhwIjoxNzQ4MzUyNjgxfQ.7ay8vPuAN2UAPHNKXG1zxtbQTFvFpjH6jhw-i2jx8p8
+@donation_id=6834b911d7935e36b89387f4
+
+@help_request_id=6834b65343ebf46de667761a
 
 ### Create Donation
 POST http://localhost:3000/donations
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTc4MjE4MWIxMzk0N2UxZjE5ZGRhMyIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0NjM3MjE4NiwiZXhwIjoxNzQ2NDU4NTg2fQ.Uc63RjAA5kJ11oqMQntpM_3UVgcS-jPJY8BjlSMyv28
+Authorization: Bearer {{token}}
 
 {
   "title": "Winter Jacket",
-  "description": "Gently used, size L",
-  "category": "Clothing"
+  "message": "Hope this helps someone stay warm this winter!",
+  "category": "clothing",
+  "helpRequest": "{{help_request_id}}"
 }
 
 ###
@@ -34,11 +37,9 @@ Authorization: Bearer {{token}}
 
 {
   "title": "Winter Jacket (Updated)",
-  "description": "Still gently used, added hood",
-  "category": "Clothing",
-  "status": "available"
+  "message": "Still gently used, added hood",
+  "category": "clothing",
 }
-
 ###
 
 ### Delete Donation
