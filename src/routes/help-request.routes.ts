@@ -10,6 +10,8 @@ const router = express.Router();
 
 router.post("/", authenticate, helpReqController.createHelpRequest);
 router.get("/", helpReqController.getAllHelpRequests);
+router.get("/open", helpReqController.getOpenHelpRequests);
+router.get("/my", authenticate, helpReqController.getMyHelpRequests);
 router.get("/:id", helpReqController.getHelpRequestById);
 router.put("/:id", authenticate, helpReqController.updateHelpRequest);
 router.delete("/:id", authenticate, helpReqController.deleteHelpRequest);

@@ -1,7 +1,7 @@
 ### Base URL
 @baseUrl=http://localhost:3000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTc4MjE4MWIxMzk0N2UxZjE5ZGRhMyIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODI2NjI4MSwiZXhwIjoxNzQ4MzUyNjgxfQ.7ay8vPuAN2UAPHNKXG1zxtbQTFvFpjH6jhw-i2jx8p8
-@helpRequestId=68347f75f7a0d872f98745f7
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzRiNjBmNDNlYmY0NmRlNjY3NzYxNyIsInJvbGUiOiJyZWNpcGllbnQiLCJpYXQiOjE3NDg0MjE5NTYsImV4cCI6MTc0ODUwODM1Nn0.EFZLxODTxTGe3etQMhBI9mQxvgPkdhqalK5rTZqEEEM
+@helpRequestId=6834b65343ebf46de667761a
 
 ### Create Help Request
 POST {{baseUrl}}/help-requests
@@ -11,7 +11,7 @@ Authorization: Bearer {{token}}
 {
   "title": "Need clothes for winter",
   "description": "I am looking for warm clothes for my kids.",
-  "category": "other"
+  "category": "clothing"
 }
 
 ### Get All Help Requests
@@ -32,4 +32,11 @@ Authorization: Bearer {{token}}
 
 ### Delete Help Request
 DELETE {{baseUrl}}/help-requests/{{helpRequestId}}
+Authorization: Bearer {{token}}
+
+### Get Open Help Requests
+GET {{baseUrl}}/help-requests/open
+
+### Get logged-in user's Help Requests
+GET {{baseUrl}}/help-requests/my
 Authorization: Bearer {{token}}

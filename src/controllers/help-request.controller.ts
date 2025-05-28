@@ -88,4 +88,21 @@ export default class HelpRequestController {
     res.status(204).send();
     return;
   }
+
+  async getOpenHelpRequests(_req: AuthRequest, res: Response) {
+    const helpRequests = await HelpRequest.find({ status: "open" }).populate(
+      "requester",
+      "name",
+    );
+    res.json(helpRequests);
+    return;
+  }
+
+  async getMyHelpRequests(req: AuthRequest, res: Response) {
+    const helpRequests = await HelpRequest.find({
+      requester: (req as any).user.id,
+    }).populate("requester", "name");
+    res.json(helpRequests);
+    return;
+  }
 }
