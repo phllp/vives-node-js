@@ -5,7 +5,6 @@ import {
   createHelpRequestSchema,
   updateHelpRequestSchema,
 } from "../validations/help-request";
-import { HelpRequest } from "../models/help-request.model";
 
 export default class HelpRequestController {
   private helpRequestService: HelpRequestService;
@@ -13,7 +12,7 @@ export default class HelpRequestController {
     this.helpRequestService = helpRequestService;
   }
 
-  async createHelpRequest(req: AuthRequest, res: Response) {
+  createHelpRequest = async (req: AuthRequest, res: Response) => {
     const { error, value } = createHelpRequestSchema.validate(req.body);
     if (error) {
       res.status(400).json({ error: error.details[0].message });
@@ -24,85 +23,146 @@ export default class HelpRequestController {
        * The logged user is the user creating the request, so we set the "requester" field
        * to the logged user's ID which is stored via the middleware
        */
-      const helpRequest = await HelpRequest.create({
-        ...value,
-        requester: (req as any).user.id,
-      });
-
+      const requesterId = (req as any).user.id;
+      value.requester = requesterId;
+      const helpRequest = await this.helpRequestService.createHelpRequest(
+        value,
+      );
       res.status(201).json(helpRequest);
       return;
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+      return;
+    }
+  };
+
+  getAllHelpRequests = async (_req: AuthRequest, res: Response) => {
+    try {
+      const helpRequests = await this.helpRequestService.getAllHelpRequests();
+      res.json(helpRequests);
+      return;
     } catch (error) {
-      res.status(400).json({ message: "Error creating Help Request", error });
+      res.status(500).json({
+        message: "Error fetching Help Requests",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
       return;
     }
-  }
+  };
 
-  async getAllHelpRequests(_req: AuthRequest, res: Response) {
-    const helpRequests = await HelpRequest.find().populate("requester", "name");
-    res.json(helpRequests);
-    return;
-  }
-
-  async getHelpRequestById(req: AuthRequest, res: Response) {
-    const helpRequest = await HelpRequest.findById(req.params.id).populate(
-      "requester",
-      "name",
-    );
-    if (!helpRequest) {
-      res.status(404).json({ message: "Help Request not found" });
-      return;
+  getHelpRequestById = async (req: AuthRequest, res: Response) => {
+    try {
+      const helpRequest = await this.helpRequestService.getHelpRequestById(
+        req.params.id,
+      );
+      if (!helpRequest) {
+        res.status(404).json({ message: "Help Request not found" });
+        return;
+      }
+      res.json(helpRequest);
+    } catch (error) {
+      res.status(500).json({
+        message: "Error fetching Help Request",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
     }
-    res.json(helpRequest);
-    return;
-  }
+  };
 
-  async updateHelpRequest(req: AuthRequest, res: Response) {
+  updateHelpRequest = async (req: AuthRequest, res: Response) => {
     const { error, value } = updateHelpRequestSchema.validate(req.body);
     if (error) {
       res.status(400).json({ error: error.details[0].message });
       return;
     }
-    const helpRequest = await HelpRequest.findByIdAndUpdate(
-      req.params.id,
-      value,
-      {
-        new: true,
-      },
-    );
-    if (!helpRequest) {
-      res.status(404).json({ message: "Help Request not found" });
+
+    try {
+      const helpRequest = await this.helpRequestService.updateHelpRequest(
+        req.params.id,
+        value,
+      );
+      if (!helpRequest) {
+        res.status(404).json({ message: "Help Request not found" });
+        return;
+      }
+      res.json(helpRequest);
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === "You can only update your own help requests"
+      ) {
+        res
+          .status(400)
+          .json({ message: "You can only update your own help requests" });
+        return;
+      }
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  };
+
+  deleteHelpRequest = async (req: AuthRequest, res: Response) => {
+    try {
+      const requesterId = (req as any).user.id;
+      const helpRequestId = req.params.id;
+      await this.helpRequestService.deleteHelpRequest(
+        helpRequestId,
+        requesterId,
+      );
+      res.status(204).send();
+      return;
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === "You can only delete your own help requests"
+      ) {
+        res
+          .status(400)
+          .json({ message: "You can only delete your own help requests" });
+        return;
+      }
+      if (
+        error instanceof Error &&
+        error.message === "Cannot delete a fulfilled help request"
+      ) {
+        res.status(400).json({
+          message: "Cannot delete a fulfilled help request",
+        });
+        return;
+      }
+      res.status(500).json({
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  };
+
+  getOpenHelpRequests = async (_req: AuthRequest, res: Response) => {
+    try {
+      const helpRequests = await this.helpRequestService.getOpenHelpRequests();
+      res.json(helpRequests);
+      return;
+    } catch (error) {
+      res.status(500).json({
+        message: "Error fetching Open Help Requests",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
       return;
     }
-    res.json(helpRequest);
-    return;
-  }
+  };
 
-  async deleteHelpRequest(req: AuthRequest, res: Response) {
-    const helpRequest = await HelpRequest.findById(req.params.id);
-    if (!helpRequest) {
-      res.status(404).json({ message: "Help Request not found" });
+  getMyHelpRequests = async (req: AuthRequest, res: Response) => {
+    try {
+      const requesterId = (req as any).user.id;
+      const helpRequests =
+        await this.helpRequestService.getHelpRequestsByRequesterId(requesterId);
+      res.json(helpRequests);
+      return;
+    } catch (error) {
+      res.status(500).json({
+        message: "Error fetching your Help Requests",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
       return;
     }
-
-    await helpRequest.deleteOne();
-    res.status(204).send();
-    return;
-  }
-
-  async getOpenHelpRequests(_req: AuthRequest, res: Response) {
-    const helpRequests = await HelpRequest.find({ status: "open" }).populate(
-      "requester",
-      "name",
-    );
-    res.json(helpRequests);
-    return;
-  }
-
-  async getMyHelpRequests(req: AuthRequest, res: Response) {
-    const helpRequests = await HelpRequest.find({
-      requester: (req as any).user.id,
-    }).populate("requester", "name");
-    res.json(helpRequests);
-    return;
-  }
+  };
 }

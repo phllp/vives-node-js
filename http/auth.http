@@ -10,8 +10,20 @@ Content-Type: application/json
 }
 
 ###
+### Register a new user recipient
+POST http://localhost:3000/auth/register
+Content-Type: application/json
 
-### Login user
+{
+  "name": "Father McKenzie",
+  "role": "recipient",
+  "email": "father@mckenzie.com",
+  "password": "fatherPassword123"
+}
+
+###
+
+### Login user (Donor)
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
@@ -22,8 +34,41 @@ Content-Type: application/json
 
 ###
 
-@token=your_token_here
+### Login user (Recipient)
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "father@mckenzie.com",
+  "password": "fatherPassword123"
+}
+
+###
+
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzcxODU5OWJkNjU5NTgwNTYwMzY1ZCIsInJvbGUiOiJyZWNpcGllbnQiLCJpYXQiOjE3NDg1MTU2NjcsImV4cCI6MTc0ODYwMjA2N30.lbuvkOiB7CVBXdCP_ity9sGtKro4RPAcI502mMAmHwU
 
 ### Get current user (Replace TOKEN after login)
 GET http://localhost:3000/auth/me
 Authorization: Bearer {{token}}
+
+
+
+#### Register a new user (Outsider)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "name": "The Outsider",
+  "role": "recipient",
+  "email": "outsider@out.com",
+  "password": "outsiderPassword123"
+}
+
+### Login user (Outsider)
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "outsider@out.com",
+  "password": "outsiderPassword123"
+}

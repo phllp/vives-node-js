@@ -1,7 +1,18 @@
 ### Base URL
 @baseUrl=http://localhost:3000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzRiNjBmNDNlYmY0NmRlNjY3NzYxNyIsInJvbGUiOiJyZWNpcGllbnQiLCJpYXQiOjE3NDg0MjE5NTYsImV4cCI6MTc0ODUwODM1Nn0.EFZLxODTxTGe3etQMhBI9mQxvgPkdhqalK5rTZqEEEM
-@helpRequestId=6834b65343ebf46de667761a
+
+
+
+### Recipient Token
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzcxODU5OWJkNjU5NTgwNTYwMzY1ZCIsInJvbGUiOiJyZWNpcGllbnQiLCJpYXQiOjE3NDg3Njg2MzEsImV4cCI6MTc0ODg1NTAzMX0.RuqRV_qEsBaGTiXT23OWCqw4Z-NV1CdCh_xooxetZHw
+
+### Donor Token
+//@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzcxODBlOWJkNjU5NTgwNTYwMzY1OSIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODUxNjA0OCwiZXhwIjoxNzQ4NjAyNDQ4fQ.4iaUPL-mvTFO72VULo2t9m7i-w78s0FmdFBmumCgJF8
+
+### Outsider Token (Recipient)
+//@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Mzg0ZGFlZjVmYTgyMDQyNjIyNzI4NyIsInJvbGUiOiJyZWNpcGllbnQiLCJpYXQiOjE3NDg1MjAzODcsImV4cCI6MTc0ODYwNjc4N30.IeH53BerAAtxCPxVQEyv-6UteXII-EpTu-6OJgpx0s8
+
+@helpRequestId=68384207552c54e1cfe3d317
 
 ### Create Help Request
 POST {{baseUrl}}/help-requests
@@ -26,8 +37,8 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "title": "Need warm winter jackets",
-  "description": "Preferably for ages 5-10."
+  "title": "Need warmer winter jackets",
+  "description": "Preferably for ages 0-5."
 }
 
 ### Delete Help Request

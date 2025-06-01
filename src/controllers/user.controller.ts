@@ -1,6 +1,5 @@
 import { Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middleware";
-import { User } from "../models/user.model";
 import UserService from "../services/user.service";
 
 export default class UserController {
@@ -9,14 +8,18 @@ export default class UserController {
     this.userService = userService;
   }
 
-  async getMe(req: AuthRequest, res: Response) {
-    const user = await User.findById(req.user.id).select("-password");
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
+  getMe = async (req: AuthRequest, res: Response) => {
+    try {
+      const user = await this.userService.getLoggedUserData(req.user.id);
+      res.json(user);
       return;
+    } catch (error: any) {
+      if (error.message === "User not found") {
+        res.status(404).json({ message: "User not found" });
+      } else {
+        console.error("Error fetching user data:", error);
+        res.status(500).json({ message: "Internal server error" });
+      }
     }
-
-    res.json(user);
-    return;
-  }
+  };
 }

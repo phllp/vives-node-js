@@ -5,8 +5,7 @@ import {
   createDonationSchema,
   updateDonationSchema,
 } from "../validations/donation";
-import { Donation } from "../models/donation.model";
-import { HelpRequest } from "../models/help-request.model";
+import { AppError } from "../errors/app-error";
 
 export default class DonationController {
   private donationService: DonationService;
@@ -15,7 +14,7 @@ export default class DonationController {
     this.donationService = donationService;
   }
 
-  async createDonation(req: AuthRequest, res: Response) {
+  createDonation = async (req: AuthRequest, res: Response) => {
     const { error, value } = createDonationSchema.validate(req.body);
     console.log(value);
     if (error) {
@@ -23,133 +22,116 @@ export default class DonationController {
       return;
     }
     try {
-      const { helpRequest } = value;
-      const request = await HelpRequest.findById(helpRequest);
-
-      if (!request) {
-        res.status(404).json({ error: "Help request not found" });
-        return;
-      }
-
-      if (request.status === "fulfilled") {
-        res
-          .status(400)
-          .json({ error: "This help request has already been fulfilled" });
-        return;
-      }
-
       /**
        * The logged user is the donor, so we set the donor field
        * to the logged user's ID which is stored via the middleware
        */
-      const donation = await Donation.create({
-        ...value,
-        donor: (req as any).user.id,
-      });
-
-      // Update the help request status to fulfilled
-      request.status = "fulfilled";
-      await request.save();
+      const donor = (req as any).user.id;
+      const donation = await this.donationService.createDonation(value, donor);
 
       res.status(201).json(donation);
       return;
-    } catch (error) {
-      console.error("Error creating donation:", error);
+    } catch (error: any) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
+        return;
+      }
       res.status(500).json({ error: "Internal server error" });
       return;
     }
-  }
+  };
 
-  async getAllDonations(req: AuthRequest, res: Response) {
-    const donations = await Donation.find().populate("donor", "name email");
+  getAllDonations = async (req: AuthRequest, res: Response) => {
+    const donations = await this.donationService.getAllDonations();
     res.json(donations);
     return;
-  }
+  };
 
-  async getDonationById(req: AuthRequest, res: Response) {
-    const donation = await Donation.findById(req.params.id).populate(
-      "donor",
-      "name email",
-    );
-    if (!donation) {
-      res.status(404).json({ error: "Donation not found" });
-      return;
-    }
-    res.json(donation);
-    return;
-  }
-
-  async updateDonation(req: AuthRequest, res: Response) {
-    const { error, value } = updateDonationSchema.validate(req.body);
-    if (error) {
-      res.status(400).json({ error: error.details[0].message });
-      return;
-    }
-
-    const donation = await Donation.findByIdAndUpdate(req.params.id, value, {
-      new: true,
-    });
-    if (!donation) {
-      res.status(404).json({ error: "Donation not found" });
-      return;
-    }
-    res.json(donation);
-    return;
-  }
-
-  // todo: add validation so that only the donor can delete the donation
-  async deleteDonation(req: AuthRequest, res: Response) {
-    const donation = await Donation.findById(req.params.id);
-
-    // const donation = await Donation.findByIdAndDelete(req.params.id);
-
-    if (!donation) {
-      res.status(404).json({ error: "Donation not found" });
-      return;
-    }
-    const request = await HelpRequest.findById(donation?.helpRequest);
-    if (request) {
-      request.status = "open"; // Reset the help request status to open
-      await request.save();
-    }
-    res.status(204).json({ message: "Donation deleted" });
-    return;
-  }
-
-  async getMyDonations(req: AuthRequest, res: Response) {
-    const userId = (req as any).user.id;
-    const donations = await Donation.find({ donor: userId }).populate(
-      "donor",
-      "name email",
-    );
-    res.json(donations);
-    return;
-  }
-
-  async getDonationOverview(req: AuthRequest, res: Response) {
+  getDonationById = async (req: AuthRequest, res: Response) => {
     try {
-      const donations = await Donation.find();
-      const helpRequests = await HelpRequest.find();
-      const openRequests = helpRequests.filter(
-        (request) => request.status === "open",
-      ).length;
+      const donationId = req.params.id;
+      const donation = await this.donationService.getDonationById(donationId);
+      res.json(donation);
+      return;
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+  };
 
-      const fulfilledRequests = helpRequests.filter(
-        (request) => request.status === "fulfilled",
-      ).length;
+  updateDonation = async (req: AuthRequest, res: Response) => {
+    try {
+      const { error, value } = updateDonationSchema.validate(req.body);
+      if (error) {
+        res.status(400).json({ error: error.details[0].message });
+        return;
+      }
 
-      const overview = {
-        totalDonations: donations.length,
-        totalHelpRequests: helpRequests.length,
-        openHelpRequests: openRequests,
-        fulfilledHelpRequests: fulfilledRequests,
-      };
+      const donation = await this.donationService.updateDonation(
+        req.params.id,
+        value,
+      );
+      res.json(donation);
+      return;
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+  };
+
+  deleteDonation = async (req: AuthRequest, res: Response) => {
+    try {
+      const donationId = req.params.id;
+      const userId = (req as any).user.id;
+      await this.donationService.deleteDonation(donationId, userId);
+      res.status(204).json({ message: "Donation deleted" });
+      return;
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+  };
+
+  getMyDonations = async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = (req as any).user.id;
+      const donations = await this.donationService.getMyDonations(userId);
+      res.json(donations);
+      return;
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
+        return;
+      }
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+  };
+
+  getDonationOverview = async (req: AuthRequest, res: Response) => {
+    try {
+      const overview = await this.donationService.getDonationOverview();
       res.json(overview);
       return;
     } catch (error) {
-      console.error("Error fetching donation overview:", error);
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
+        return;
+      }
       res.status(500).json({ error: "Internal server error" });
       return;
     }
-  }
+  };
 }

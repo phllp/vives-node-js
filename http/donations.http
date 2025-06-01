@@ -1,8 +1,8 @@
 # Replace the following variables with your actual values
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTc4MjE4MWIxMzk0N2UxZjE5ZGRhMyIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODQyMTg1NywiZXhwIjoxNzQ4NTA4MjU3fQ.1dOUvuzVutTqgVJR_duaS4x3dJ9R5Kzi86VE4PLFFH0
-@donation_id=6834b911d7935e36b89387f4
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzcxODBlOWJkNjU5NTgwNTYwMzY1OSIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODc3NDA1MCwiZXhwIjoxNzQ4ODYwNDUwfQ.lZIsTqvzQKcQsUrXs_t6SrdIzaLFb_MtlDUJEwzC9ow
+@donation_id=683c2b448f52954932b44bda
 
-@help_request_id=6834b65343ebf46de667761a
+@help_request_id=68383d01c8bdd3ae36b8a354
 
 ### Create Donation
 POST http://localhost:3000/donations
@@ -37,8 +37,8 @@ Authorization: Bearer {{token}}
 
 {
   "title": "Winter Jacket (Updated)",
-  "message": "Still gently used, added hood",
-  "category": "clothing",
+  "description": "Still gently used, added hood",
+  "category": "clothing"
 }
 ###
 
@@ -51,3 +51,7 @@ Authorization: Bearer {{token}}
 
 ### Get donations overview
 GET http://localhost:3000/donations/analytics/overview
+
+### Get Authenticated User's Donations
+GET http://localhost:3000/donations/my
+Authorization: Bearer {{token}}
