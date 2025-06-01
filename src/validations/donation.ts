@@ -3,7 +3,9 @@ import mongoose from "mongoose";
 
 export const createDonationSchema = Joi.object({
   title: Joi.string().required(),
-  category: Joi.string().required(),
+  category: Joi.string()
+    .required()
+    .valid("food", "clothing", "health", "other"),
   message: Joi.string().max(500).optional(),
   helpRequest: Joi.string()
     .required()
