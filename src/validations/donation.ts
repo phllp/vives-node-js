@@ -20,12 +20,7 @@ export const createDonationSchema = Joi.object({
 export const updateDonationSchema = Joi.object({
   title: Joi.string(),
   description: Joi.string().allow(""),
-  category: Joi.string(),
-  status: Joi.string().valid("available", "claimed", "completed"),
-  recipient: Joi.string().custom((value, helpers) => {
-    if (!mongoose.Types.ObjectId.isValid(value)) {
-      return helpers.error("Invalid recipient ID");
-    }
-    return value;
-  }),
+  category: Joi.string()
+    .required()
+    .valid("food", "clothing", "health", "other"),
 });
