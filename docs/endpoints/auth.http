@@ -9,7 +9,7 @@ Content-Type: application/json
   "password": "eleanorPassword123"
 }
 
-###
+### todo add validation for user type
 ### Register a new user recipient
 POST http://localhost:3000/auth/register
 Content-Type: application/json
