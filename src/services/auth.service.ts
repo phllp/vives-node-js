@@ -1,6 +1,8 @@
 import UserRepository from "../database/repository/user.repository";
 import bcrypt from "bcryptjs";
 import { signToken } from "../utils/jwt";
+import { ValidationError } from "../errors/validation-error";
+import { NotFoundError } from "../errors/not-found";
 
 export default class AuthService {
   private readonly userRepository: UserRepository;
@@ -12,7 +14,7 @@ export default class AuthService {
   async login(email: string, password: string): Promise<any> {
     const user = await this.userRepository.getUserByEmail(email);
     if (!user) {
-      throw new Error("User not found");
+      throw new NotFoundError("User");
     }
     const passwordMatch = await bcrypt.compare(password, user.password);
 
@@ -31,7 +33,7 @@ export default class AuthService {
   ): Promise<any> {
     const userExists = await this.userRepository.getUserByEmail(email);
     if (userExists) {
-      throw new Error("Email already registered");
+      throw new ValidationError("Email already registered");
     }
 
     const hashed = await bcrypt.hash(password, 10);
