@@ -23,4 +23,4 @@ export const updateDonationSchema = Joi.object({
   category: Joi.string()
     .required()
     .valid("food", "clothing", "health", "other"),
-});
+}).min(1);
