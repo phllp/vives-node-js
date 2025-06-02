@@ -1,5 +1,7 @@
 import HelpRequestRepository from "../database/repository/help-request.repository";
 import UserRepository from "../database/repository/user.repository";
+import { NotFoundError } from "../errors/not-found";
+import { UnauthorizedError } from "../errors/unauthorized";
 
 export default class HelpRequestService {
   private helpRequestRepository: HelpRequestRepository;
@@ -48,27 +50,22 @@ export default class HelpRequestService {
     }
   }
 
-  async updateHelpRequest(id: string, data: any): Promise<any> {
-    try {
-      const hr = await this.helpRequestRepository.getHelpRequestById(id);
-      if (!hr) {
-        return null;
-      }
-      if (hr.requester.toString() !== data.requester) {
-        throw new Error("You can only update your own help requests");
-      }
-
-      const helpRequest = await this.helpRequestRepository.updateHelpRequest(
-        id,
-        data,
-      );
-      console.log("Help Request Updated:", helpRequest);
-      return helpRequest;
-    } catch (error: any) {
-      console.error("Error updating Help Request:", error);
-      throw new Error(error.message || "Error updating Help Request");
+  async updateHelpRequest(id: string, data: any, userId: string): Promise<any> {
+    const hr = await this.helpRequestRepository.getHelpRequestById(id);
+    if (!hr) {
+      throw new NotFoundError("Help Request");
     }
+    if (hr.requester._id.toString() !== userId) {
+      throw new UnauthorizedError("You can only update your own help requests");
+    }
+
+    const helpRequest = await this.helpRequestRepository.updateHelpRequest(
+      id,
+      data,
+    );
+    return helpRequest;
   }
+
   async deleteHelpRequest(id: string, userId: string): Promise<void> {
     try {
       const hr = await this.helpRequestRepository.getHelpRequestById(id);

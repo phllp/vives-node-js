@@ -5,6 +5,7 @@ import {
   createHelpRequestSchema,
   updateHelpRequestSchema,
 } from "../validations/help-request";
+import { AppError } from "../errors/app-error";
 
 export default class HelpRequestController {
   private helpRequestService: HelpRequestService;
@@ -76,28 +77,19 @@ export default class HelpRequestController {
     }
 
     try {
+      const requesterId = (req as any).user.id;
       const helpRequest = await this.helpRequestService.updateHelpRequest(
         req.params.id,
         value,
+        requesterId,
       );
-      if (!helpRequest) {
-        res.status(404).json({ message: "Help Request not found" });
-        return;
-      }
       res.json(helpRequest);
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message === "You can only update your own help requests"
-      ) {
-        res
-          .status(400)
-          .json({ message: "You can only update your own help requests" });
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
         return;
       }
-      res.status(500).json({
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
+      res.status(500).json({ error: "Internal server error" });
     }
   };
 
