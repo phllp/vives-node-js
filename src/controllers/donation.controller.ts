@@ -32,7 +32,6 @@ export default class DonationController {
       const donation = await this.donationService.createDonation(value, donor);
 
       res.status(201).json(donation);
-      return;
     } catch (error: any) {
       next(error);
     }
@@ -60,7 +59,6 @@ export default class DonationController {
       const donationId = req.params.id;
       const donation = await this.donationService.getDonationById(donationId);
       res.json(donation);
-      return;
     } catch (error) {
       next(error);
     }
@@ -82,7 +80,6 @@ export default class DonationController {
         value,
       );
       res.json(donation);
-      return;
     } catch (error) {
       next(error);
     }
@@ -98,7 +95,6 @@ export default class DonationController {
       const userId = (req as any).user.id;
       await this.donationService.deleteDonation(donationId, userId);
       res.status(204).json({ message: "Donation deleted" });
-      return;
     } catch (error) {
       next(error);
     }
@@ -113,7 +109,6 @@ export default class DonationController {
       const userId = (req as any).user.id;
       const donations = await this.donationService.getMyDonations(userId);
       res.json(donations);
-      return;
     } catch (error) {
       next(error);
     }
@@ -127,7 +122,6 @@ export default class DonationController {
     try {
       const overview = await this.donationService.getDonationOverview();
       res.json(overview);
-      return;
     } catch (error) {
       next(error);
     }
