@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import AuthService from "../services/auth.service";
 import { createUserSchema } from "../validations/user";
-import { AppError } from "../errors/app-error";
 import { ValidationError } from "../errors/validation-error";
+import { UnauthorizedError } from "../errors/unauthorized";
 
 export default class AuthController {
   private authService: AuthService;
@@ -10,7 +10,7 @@ export default class AuthController {
     this.authService = authService;
   }
 
-  register = async (req: Request, res: Response) => {
+  register = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { error, value } = createUserSchema.validate(req.body);
       if (error) {
@@ -19,17 +19,12 @@ export default class AuthController {
       const { name, email, password, role } = value;
       const user = await this.authService.register(name, email, password, role);
       res.status(201).json({ id: user._id, email: user.email });
-      return;
     } catch (error: any) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-        return;
-      }
-      res.status(500).json({ error: "Internal server error" });
+      next(error);
     }
   };
 
-  login = async (req: Request, res: Response) => {
+  login = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body;
       if (!email || !password) {
@@ -37,16 +32,11 @@ export default class AuthController {
       }
       const login = await this.authService.login(email, password);
       if (!login) {
-        res.status(401).json({ message: "Invalid credentials" });
-        return;
+        throw new UnauthorizedError("Invalid email or password");
       }
       res.json({ token: login });
     } catch (error: any) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-        return;
-      }
-      res.status(500).json({ error: "Internal server error" });
+      next(error);
     }
   };
 }

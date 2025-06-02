@@ -1,4 +1,5 @@
 import UserRepository from "../database/repository/user.repository";
+import { NotFoundError } from "../errors/not-found";
 
 export default class UserService {
   private readonly userRepository: UserRepository;
@@ -9,7 +10,7 @@ export default class UserService {
   async getLoggedUserData(userId: string): Promise<any> {
     const user = await this.userRepository.getUserById(userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new NotFoundError("User");
     }
     user.password = undefined;
     return user;

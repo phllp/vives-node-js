@@ -2,6 +2,7 @@ import HelpRequestRepository from "../database/repository/help-request.repositor
 import UserRepository from "../database/repository/user.repository";
 import { NotFoundError } from "../errors/not-found";
 import { UnauthorizedError } from "../errors/unauthorized";
+import { ValidationError } from "../errors/validation-error";
 
 export default class HelpRequestService {
   private helpRequestRepository: HelpRequestRepository;
@@ -14,40 +15,25 @@ export default class HelpRequestService {
     // Validate that the requester is a recipient
     const user = await this.userRepository.getUserById(data.requester);
     if (user.role !== "recipient") {
-      throw new Error("Only recipients can create help requests");
+      throw new ValidationError("Only recipients can create help requests");
     }
-    try {
-      const helpRequest = await this.helpRequestRepository.createHelpRequest(
-        data,
-      );
-      return helpRequest;
-    } catch (error) {
-      console.error("Error creating Help Request:", error);
-      throw new Error("Error creating Help Request");
-    }
+    const helpRequest = await this.helpRequestRepository.createHelpRequest(
+      data,
+    );
+    return helpRequest;
   }
 
   async getAllHelpRequests(): Promise<any[]> {
-    try {
-      const helpRequests =
-        await this.helpRequestRepository.getAllHelpRequests();
-      return helpRequests;
-    } catch (error) {
-      console.error("Error fetching Help Requests:", error);
-      throw new Error("Error fetching Help Requests");
-    }
+    const helpRequests = await this.helpRequestRepository.getAllHelpRequests();
+    return helpRequests;
   }
 
   async getHelpRequestById(id: string): Promise<any> {
-    try {
-      const helpRequest = await this.helpRequestRepository.getHelpRequestById(
-        id,
-      );
-      return helpRequest;
-    } catch (error) {
-      console.error("Error fetching Help Request by ID:", error);
-      throw new Error("Error fetching Help Request by ID");
+    const helpRequest = await this.helpRequestRepository.getHelpRequestById(id);
+    if (!helpRequest) {
+      throw new NotFoundError("Help Request");
     }
+    return helpRequest;
   }
 
   async updateHelpRequest(id: string, data: any, userId: string): Promise<any> {
@@ -67,47 +53,32 @@ export default class HelpRequestService {
   }
 
   async deleteHelpRequest(id: string, userId: string): Promise<void> {
-    try {
-      const hr = await this.helpRequestRepository.getHelpRequestById(id);
-      if (!hr) {
-        return;
-      }
-      // Ensure the requester is the one trying to delete the help request
-      if (hr.requester._id.toString() !== userId) {
-        throw new Error("You can only delete your own help requests");
-      }
-      // Cant delete a help request that has been fulfilled
-      if (hr.status === "fulfilled") {
-        throw new Error("Cannot delete a fulfilled help request");
-      }
-      await this.helpRequestRepository.deleteHelpRequest(id);
-    } catch (error: any) {
-      console.error("Error deleting Help Request:", error);
-      throw new Error(error.message || "Error deleting Help Request");
+    const hr = await this.helpRequestRepository.getHelpRequestById(id);
+    if (!hr) {
+      return;
     }
+    // Ensure the requester is the one trying to delete the help request
+    if (hr.requester._id.toString() !== userId) {
+      throw new UnauthorizedError("You can only delete your own help requests");
+    }
+    // Cant delete a help request that has been fulfilled
+    if (hr.status === "fulfilled") {
+      throw new ValidationError("Cannot delete a fulfilled help request");
+    }
+    await this.helpRequestRepository.deleteHelpRequest(id);
   }
 
   async getOpenHelpRequests(): Promise<any[]> {
-    try {
-      const openHelpRequests =
-        await this.helpRequestRepository.getOpenHelpRequests();
-      return openHelpRequests;
-    } catch (error) {
-      console.error("Error fetching Open Help Requests:", error);
-      throw new Error("Error fetching Open Help Requests");
-    }
+    const openHelpRequests =
+      await this.helpRequestRepository.getOpenHelpRequests();
+    return openHelpRequests;
   }
 
   async getHelpRequestsByRequesterId(requesterId: string): Promise<any[]> {
-    try {
-      const helpRequests =
-        await this.helpRequestRepository.getHelpRequestsByRequesterId(
-          requesterId,
-        );
-      return helpRequests;
-    } catch (error) {
-      console.error("Error fetching Help Requests by Requester ID:", error);
-      throw new Error("Error fetching Help Requests by Requester ID");
-    }
+    const helpRequests =
+      await this.helpRequestRepository.getHelpRequestsByRequesterId(
+        requesterId,
+      );
+    return helpRequests;
   }
 }

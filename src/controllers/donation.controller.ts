@@ -1,11 +1,11 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middleware";
 import DonationService from "../services/donation.service";
 import {
   createDonationSchema,
   updateDonationSchema,
 } from "../validations/donation";
-import { AppError } from "../errors/app-error";
+import { ValidationError } from "../errors/validation-error";
 
 export default class DonationController {
   private donationService: DonationService;
@@ -14,14 +14,16 @@ export default class DonationController {
     this.donationService = donationService;
   }
 
-  createDonation = async (req: AuthRequest, res: Response) => {
-    const { error, value } = createDonationSchema.validate(req.body);
-    console.log(value);
-    if (error) {
-      res.status(400).json({ error: error.details[0].message });
-      return;
-    }
+  createDonation = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
+      const { error, value } = createDonationSchema.validate(req.body);
+      if (error) {
+        throw new ValidationError(error.details[0].message);
+      }
       /**
        * The logged user is the donor, so we set the donor field
        * to the logged user's ID which is stored via the middleware
@@ -32,43 +34,47 @@ export default class DonationController {
       res.status(201).json(donation);
       return;
     } catch (error: any) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-        return;
-      }
-      res.status(500).json({ error: "Internal server error" });
-      return;
+      next(error);
     }
   };
 
-  getAllDonations = async (req: AuthRequest, res: Response) => {
-    const donations = await this.donationService.getAllDonations();
-    res.json(donations);
-    return;
+  getAllDonations = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const donations = await this.donationService.getAllDonations();
+      res.json(donations);
+    } catch (error) {
+      next(error);
+    }
   };
 
-  getDonationById = async (req: AuthRequest, res: Response) => {
+  getDonationById = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const donationId = req.params.id;
       const donation = await this.donationService.getDonationById(donationId);
       res.json(donation);
       return;
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-        return;
-      }
-      res.status(500).json({ error: "Internal server error" });
-      return;
+      next(error);
     }
   };
 
-  updateDonation = async (req: AuthRequest, res: Response) => {
+  updateDonation = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const { error, value } = updateDonationSchema.validate(req.body);
       if (error) {
-        res.status(400).json({ error: error.details[0].message });
-        return;
+        throw new ValidationError(error.details[0].message);
       }
 
       const donation = await this.donationService.updateDonation(
@@ -78,16 +84,15 @@ export default class DonationController {
       res.json(donation);
       return;
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-        return;
-      }
-      res.status(500).json({ error: "Internal server error" });
-      return;
+      next(error);
     }
   };
 
-  deleteDonation = async (req: AuthRequest, res: Response) => {
+  deleteDonation = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const donationId = req.params.id;
       const userId = (req as any).user.id;
@@ -95,43 +100,36 @@ export default class DonationController {
       res.status(204).json({ message: "Donation deleted" });
       return;
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-        return;
-      }
-      res.status(500).json({ error: "Internal server error" });
-      return;
+      next(error);
     }
   };
 
-  getMyDonations = async (req: AuthRequest, res: Response) => {
+  getMyDonations = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const userId = (req as any).user.id;
       const donations = await this.donationService.getMyDonations(userId);
       res.json(donations);
       return;
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-        return;
-      }
-      res.status(500).json({ error: "Internal server error" });
-      return;
+      next(error);
     }
   };
 
-  getDonationOverview = async (req: AuthRequest, res: Response) => {
+  getDonationOverview = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const overview = await this.donationService.getDonationOverview();
       res.json(overview);
       return;
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-        return;
-      }
-      res.status(500).json({ error: "Internal server error" });
-      return;
+      next(error);
     }
   };
 }
