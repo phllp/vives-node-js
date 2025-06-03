@@ -64,11 +64,15 @@ export default class DonationService {
     return donation;
   }
 
-  async updateDonation(id: string, data: any): Promise<any> {
+  async updateDonation(id: string, data: any, userId: string): Promise<any> {
     const { category } = data;
     const donation = await this.donationRepository.getDonationById(id);
     if (!donation) {
       throw new NotFoundError("Donation");
+    }
+
+    if (donation.donor._id.toString() !== userId) {
+      throw new UnauthorizedError("You can only update your own donations");
     }
 
     if (category && category !== donation.category) {

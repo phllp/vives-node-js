@@ -19,8 +19,6 @@ export const createDonationSchema = Joi.object({
 
 export const updateDonationSchema = Joi.object({
   title: Joi.string(),
-  description: Joi.string().allow(""),
-  category: Joi.string()
-    .required()
-    .valid("food", "clothing", "health", "other"),
+  message: Joi.string().allow(""),
+  category: Joi.string().valid("food", "clothing", "health", "other"),
 }).min(1);

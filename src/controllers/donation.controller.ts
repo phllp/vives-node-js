@@ -74,10 +74,11 @@ export default class DonationController {
       if (error) {
         throw new ValidationError(error.details[0].message);
       }
-
+      const userId = (req as any).user.id;
       const donation = await this.donationService.updateDonation(
         req.params.id,
         value,
+        userId,
       );
       res.json(donation);
     } catch (error) {
