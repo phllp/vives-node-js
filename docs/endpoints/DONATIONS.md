@@ -43,7 +43,8 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
-  "error": "This help request has already been fulfilled"
+  "status": "error",
+  "message": "This help request has already been fulfilled"
 }
 ```
 
@@ -51,7 +52,8 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
-  "error": "The category of the help request does not match the donation category"
+  "status": "error",
+  "message": "The category of the help request does not match the donation category"
 }
 ```
 
@@ -59,7 +61,34 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
-  "error": "Help request not found"
+  "status": "error",
+  "message": "Help request not found"
+}
+```
+
+**Response 400** User role invalid
+
+```json
+{
+  "status": "error",
+  "message": "Only Donors can create Donations"
+}
+```
+
+**Response 400** Missing params
+
+```json
+{
+  "status": "error",
+  "message": "\"category\" is required"
+}
+```
+
+**Response 401** Unauthorized
+
+```json
+{
+  "message": "Unauthorized: Invalid token"
 }
 ```
 
@@ -127,7 +156,8 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
-  "error": "Donation not found"
+  "status": "error",
+  "message": "Donation not found"
 }
 ```
 
@@ -173,6 +203,15 @@ Authorization: Bearer <JWT_TOKEN>
 }
 ```
 
+**Response 403**
+
+```json
+{
+  "status": "error",
+  "message": "You can only update your own donations"
+}
+```
+
 **Response 400:** Bad Request for invalid ID or payload
 
 ### 5. Delete Donation
@@ -197,7 +236,8 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
-  "error": "You can only delete your own donations"
+  "status": "error",
+  "message": "You can only delete your own donations"
 }
 ```
 
@@ -246,4 +286,12 @@ Authorization: Bearer <JWT_TOKEN>
     "__v": 0
   }
 ]
+```
+
+**Response 401** Unauthorized
+
+```json
+{
+  "message": "Unauthorized: Token not provided"
+}
 ```

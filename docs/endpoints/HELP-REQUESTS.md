@@ -2,9 +2,15 @@
 
 ### 1. Create Help Request
 
-**Endpoint:** `POST /help-request`
+**Endpoint:** `POST /help-requests`
 
 **Description:** Create a new help request.
+
+- Allowed categories:
+  - clothing
+  - food
+  - health
+  - other
 
 **Headers:**
 
@@ -41,7 +47,8 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
-  "error": "\"category\" must be one of [food, clothing, health, other]"
+  "status": "error",
+  "message": "\"category\" must be one of [food, clothing, health, other]"
 }
 ```
 
@@ -49,7 +56,8 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
-  "error": "\"title\" is required"
+  "status": "error",
+  "message": "\"title\" is required"
 }
 ```
 
@@ -57,13 +65,14 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
+  "status": "error",
   "message": "Only recipients can create help requests"
 }
 ```
 
 ### 2. Get all Help Requests
 
-**Endpoint:** `GET /help-request`
+**Endpoint:** `GET /help-requests`
 
 **Description:** Retrieve a list of all existing Help Requests.
 
@@ -90,7 +99,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ### 3. Get Help Request by ID
 
-**Endpoint:** `GET /help-request/:id`
+**Endpoint:** `GET /help-requests/:id`
 
 **Description:** Get a specific Help Request by its ID.
 
@@ -118,13 +127,14 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
+  "status": "error",
   "message": "Help Request not found"
 }
 ```
 
 ### 4. Update Help Request
 
-**Endpoint:** `PUT /help-request/:id`
+**Endpoint:** `PUT /help-requests/:id`
 
 **Description:** Update details of a Help Request.
 
@@ -158,6 +168,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
+  "status": "error",
   "message": "Help Request not found"
 }
 ```
@@ -166,13 +177,14 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
+  "status": "error",
   "message": "You can only update your own help requests"
 }
 ```
 
 ### 5. Delete Help Request
 
-**Endpoint:** `DELETE /help-request/:id`
+**Endpoint:** `DELETE /help-requests/:id`
 
 **Description:** Delete a Help Request (only by its creator).
 
@@ -184,14 +196,16 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
+  "status": "error",
   "message": "Cannot delete a fulfilled help request"
 }
 ```
 
-**Error 400** Can't delete other user Request
+**Error 403** Can't delete other user Request
 
 ```json
 {
+  "status": "error",
   "message": "You can only delete your own help requests"
 }
 ```

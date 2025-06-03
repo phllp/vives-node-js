@@ -1,13 +1,19 @@
-# Replace the following variables with your actual values
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzcxODBlOWJkNjU5NTgwNTYwMzY1OSIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODc3NDA1MCwiZXhwIjoxNzQ4ODYwNDUwfQ.lZIsTqvzQKcQsUrXs_t6SrdIzaLFb_MtlDUJEwzC9ow
-@donation_id=683c2b448f52954932b44bda
+### Base URL
+@baseUrl=https://not-an-api.com
 
-@help_request_id=68383d01c8bdd3ae36b8a354
+
+# Authentication Tokens
+@token_donor=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2Q2ZDEzNjQ2ZDM4ODVmYWFiZjhkMSIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODk0OTE4MywiZXhwIjoxNzQ5MDM1NTgzfQ.IlT7MN5SXqmtprAUyhtA9N9IDYgUN-sCmCfDcvWdfSM
+@token_recipient=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2Q3MDMyNjQ2ZDM4ODVmYWFiZjhkYiIsInJvbGUiOiJyZWNpcGllbnQiLCJpYXQiOjE3NDg5NDkwMzMsImV4cCI6MTc0OTAzNTQzM30.E9F0z-VMVC0OyC54VoasLKNhHSqAb7fTJ3lH-Ed1f1s
+
+# Donation ID and Help Request ID
+@donation_id=683ed8dd21167e4388f02034
+@help_request_id=683ed8dd21167e4388f02034
 
 ### Create Donation
-POST http://localhost:3000/donations
+POST {{baseUrl}}/donations
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{token_donor}}
 
 {
   "title": "Winter Jacket",
@@ -16,42 +22,40 @@ Authorization: Bearer {{token}}
   "helpRequest": "{{help_request_id}}"
 }
 
-###
+####
 
 ### Get All Donations
-GET http://localhost:3000/donations
-Authorization: Bearer {{token}}
+GET {{baseUrl}}/donations
 
-###
+####
 
 ### Get Donation by ID
-GET http://localhost:3000/donations/{{donation_id}}
-Authorization: Bearer {{token}}
+GET {{baseUrl}}/donations/{{donation_id}}
 
-###
+####
 
 ### Update Donation
-PUT http://localhost:3000/donations/{{donation_id}}
+PUT {{baseUrl}}/donations/{{donation_id}}
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{token_donor}}
 
 {
   "title": "Winter Jacket (Updated)",
-  "description": "Still gently used, added hood",
-  "category": "clothing"
+  "message": "Still gently used, added hood"
 }
-###
+
+####
 
 ### Delete Donation
-DELETE http://localhost:3000/donations/{{donation_id}}
-Authorization: Bearer {{token}}
+DELETE {{baseUrl}}/donations/{{donation_id}}
+Authorization: Bearer {{token_donor}}
 
 ###
 
 
 ### Get donations overview
-GET http://localhost:3000/donations/analytics/overview
+GET {{baseUrl}}/donations/analytics/overview
 
 ### Get Authenticated User's Donations
-GET http://localhost:3000/donations/my
-Authorization: Bearer {{token}}
+GET {{baseUrl}}/donations/my
+Authorization: Bearer {{token_donor}}

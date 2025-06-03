@@ -1,23 +1,20 @@
 ### Base URL
-@baseUrl=http://localhost:3000
-
+@baseUrl=https://not-an-api.com
 
 
 ### Recipient Token
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzcxODU5OWJkNjU5NTgwNTYwMzY1ZCIsInJvbGUiOiJyZWNpcGllbnQiLCJpYXQiOjE3NDg3Njg2MzEsImV4cCI6MTc0ODg1NTAzMX0.RuqRV_qEsBaGTiXT23OWCqw4Z-NV1CdCh_xooxetZHw
+@token_recipient=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2Q3MDMyNjQ2ZDM4ODVmYWFiZjhkYiIsInJvbGUiOiJyZWNpcGllbnQiLCJpYXQiOjE3NDg5NDgxNTgsImV4cCI6MTc0OTAzNDU1OH0.5hUjo4zkKfPy4Lo8Ikl6N2CgeLwU243RcIRiuN1PmmI
 
 ### Donor Token
-//@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzcxODBlOWJkNjU5NTgwNTYwMzY1OSIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODUxNjA0OCwiZXhwIjoxNzQ4NjAyNDQ4fQ.4iaUPL-mvTFO72VULo2t9m7i-w78s0FmdFBmumCgJF8
+@token_donor=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2Q2ZDEzNjQ2ZDM4ODVmYWFiZjhkMSIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODk0ODM3MiwiZXhwIjoxNzQ5MDM0NzcyfQ.RKJLV6XTVRw3EnMYtNba2EJo7a2lbsZoZU4lGsAEuRs
 
-### Outsider Token (Recipient)
-//@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Mzg0ZGFlZjVmYTgyMDQyNjIyNzI4NyIsInJvbGUiOiJyZWNpcGllbnQiLCJpYXQiOjE3NDg1MjAzODcsImV4cCI6MTc0ODYwNjc4N30.IeH53BerAAtxCPxVQEyv-6UteXII-EpTu-6OJgpx0s8
-
-@helpRequestId=68384207552c54e1cfe3d317
+### Help Request ID
+@help_request_id=683ed4cb21167e4388f0200a
 
 ### Create Help Request
 POST {{baseUrl}}/help-requests
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{token_recipient}}
 
 {
   "title": "Need clothes for winter",
@@ -29,12 +26,12 @@ Authorization: Bearer {{token}}
 GET {{baseUrl}}/help-requests
 
 ### Get Help Request by ID
-GET {{baseUrl}}/help-requests/{{helpRequestId}}
+GET {{baseUrl}}/help-requests/{{help_request_id}}
 
 ### Update Help Request
-PUT {{baseUrl}}/help-requests/{{helpRequestId}}
+PUT {{baseUrl}}/help-requests/{{help_request_id}}
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{token_donor}}
 
 {
   "title": "Need warmer winter jackets",
@@ -42,12 +39,12 @@ Authorization: Bearer {{token}}
 }
 
 ### Delete Help Request
-DELETE {{baseUrl}}/help-requests/{{helpRequestId}}
-Authorization: Bearer {{token}}
+DELETE {{baseUrl}}/help-requests/{{help_request_id}}
+Authorization: Bearer {{token_recipient}}
 
 ### Get Open Help Requests
 GET {{baseUrl}}/help-requests/open
 
 ### Get logged-in user's Help Requests
 GET {{baseUrl}}/help-requests/my
-Authorization: Bearer {{token}}
+Authorization: Bearer {{token_recipient}}

@@ -6,6 +6,11 @@
 
 **Description:** Creates a new user account.
 
+- Allowed roles
+  - donor
+  - recipient
+- Password must be at least 8 chars long
+
 **Request Body:**
 
 ```json
@@ -30,7 +35,8 @@
 
 ```json
 {
-  "message": "All fields are required"
+  "status": "error",
+  "message": "\"email\" is required"
 }
 ```
 
@@ -38,6 +44,7 @@
 
 ```json
 {
+  "status": "error",
   "message": "Email already registered"
 }
 ```
@@ -67,11 +74,12 @@
 }
 ```
 
-**Unauthorized 401** (invalid credentials)
+**Unauthorized 401** Invalid credentials
 
 ```json
 {
-  "message": "Invalid credentials"
+  "status": "error",
+  "message": "Invalid email or password"
 }
 ```
 
@@ -79,6 +87,7 @@
 
 ```json
 {
+  "status": "error",
   "message": "All fields are required"
 }
 ```
@@ -112,6 +121,6 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
-  "message": "Unauthorized: Token not provided"
+  "message": "Unauthorized: Invalid token"
 }
 ```

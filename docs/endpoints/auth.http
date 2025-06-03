@@ -1,5 +1,5 @@
 ### Register a new user
-POST http://localhost:3000/auth/register
+POST https://not-an-api.com/auth/register
 Content-Type: application/json
 
 {
@@ -9,9 +9,10 @@ Content-Type: application/json
   "password": "eleanorPassword123"
 }
 
-### todo add validation for user type
+####
+
 ### Register a new user recipient
-POST http://localhost:3000/auth/register
+POST https://not-an-api.com/auth/register
 Content-Type: application/json
 
 {
@@ -21,10 +22,10 @@ Content-Type: application/json
   "password": "fatherPassword123"
 }
 
-###
+####
 
-### Login user (Donor)
-POST http://localhost:3000/auth/login
+### Login user Eleanor Rigby (Donor)
+POST https://not-an-api.com/auth/login
 Content-Type: application/json
 
 {
@@ -32,10 +33,10 @@ Content-Type: application/json
   "password": "eleanorPassword123"
 }
 
-###
+####
 
-### Login user (Recipient)
-POST http://localhost:3000/auth/login
+### Login user Father McKenzie (Recipient)
+POST https://not-an-api.com/auth/login
 Content-Type: application/json
 
 {
@@ -43,32 +44,37 @@ Content-Type: application/json
   "password": "fatherPassword123"
 }
 
-###
+####
 
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzcxODU5OWJkNjU5NTgwNTYwMzY1ZCIsInJvbGUiOiJyZWNpcGllbnQiLCJpYXQiOjE3NDg1MTU2NjcsImV4cCI6MTc0ODYwMjA2N30.lbuvkOiB7CVBXdCP_ity9sGtKro4RPAcI502mMAmHwU
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2Q2ZDEzNjQ2ZDM4ODVmYWFiZjhkMSIsInJvbGUiOiJkb25vciIsImlhdCI6MTc0ODk0NzQ5NCwiZXhwIjoxNzQ5MDMzODk0fQ.m9LIO2EoAt1v2VAOnp8fYvD4GOFhPBoKqtXWQMSH9t8
 
 ### Get current user (Replace TOKEN after login)
-GET http://localhost:3000/auth/me
+GET https://not-an-api.com/auth/me
 Authorization: Bearer {{token}}
 
+####
 
 
-#### Register a new user (Outsider)
-POST http://localhost:3000/auth/register
+#### Register a new user 
+POST https://not-an-api.com/auth/register
 Content-Type: application/json
 
 {
-  "name": "The Outsider",
+  "name": "Lucy in the Sky With Diamonds",
   "role": "recipient",
-  "email": "outsider@out.com",
-  "password": "outsiderPassword123"
+  "email": "lucy@diamonds.com",
+  "password": "lucyPassword123"
 }
 
-### Login user (Outsider)
-POST http://localhost:3000/auth/login
+####
+
+### Login user
+POST https://not-an-api.com/auth/login
 Content-Type: application/json
 
 {
-  "email": "outsider@out.com",
-  "password": "outsiderPassword123"
+  "email": "lucy@diamonds.com",
+  "password": "lucyPassword1234"
 }
+
+####
